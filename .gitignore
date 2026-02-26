@@ -1,26 +1,12 @@
-# Python
-__pycache__/
+# Python virtual env
+.venv/
+Backend/milan/
+Backend/__pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# Django
-db.sqlite3
-
-# Environment
-.env
-venv/
-env/
 
 # Node
-node_modules/
+frontend/node_modules/
+frontend/.next/
 
-# Next.js
-.next/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# VS Code
-.vscode/
+# Environment files
+.env
