@@ -5,13 +5,39 @@ from rest_framework import status
 from .models import Cart, CartItem
 from .serializers import CartSerializer
 
-from django.contrib.auth import get_user_model
+from products.models import Product
 
-User = get_user_model()
+
+@api_view(["GET"])
+def get_cart(request):
+    """
+    Get user's cart using user_id from query params (temporary, until authentication is added)
+    """
+
+    user_id = request.query_params.get("user_id")
+
+    if not user_id:
+        return Response(
+            {"error": "user_id required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    cart, created = Cart.objects.get_or_create(
+        user_id=user_id,
+        is_active=True
+    )
+
+    serializer = CartSerializer(cart)
+
+    return Response(serializer.data)
 
 
 @api_view(["POST"])
 def add_to_cart(request):
+    """
+    Add product to cart
+    """
+
     user_id = request.data.get("user_id")
     product_id = request.data.get("product_id")
     quantity = int(request.data.get("quantity", 1))
@@ -22,16 +48,16 @@ def add_to_cart(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = User.objects.get(id=user_id)
-
     cart, created = Cart.objects.get_or_create(
-        user=user,
+        user_id=user_id,
         is_active=True
     )
 
+    product = Product.objects.get(id=product_id)
+
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
-        product_id=product_id,
+        product=product
     )
 
     if not created:
@@ -44,19 +70,3 @@ def add_to_cart(request):
     serializer = CartSerializer(cart)
 
     return Response(serializer.data)
-
-
-@api_view(["GET"])
-def get_user_cart(request, user_id):
-
-    try:
-        cart = Cart.objects.get(user_id=user_id, is_active=True)
-        serializer = CartSerializer(cart)
-        return Response(serializer.data)
-    except Cart.DoesNotExist:
-        return Response({
-            "id": None,
-            "user": user_id,
-            "items": [],
-            "created_at": None
-        })

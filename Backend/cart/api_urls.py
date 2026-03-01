@@ -1,7 +1,10 @@
 from django.urls import path
-from .api_views import *
+from . import api_views
 
 urlpatterns = [
-    path("add/", add_to_cart),
-    path("user/<int:user_id>/", get_user_cart),
+
+    path("", api_views.get_cart, name="get_cart"),
+
+    path("items/", api_views.add_to_cart, name="add_to_cart"),
+
 ]
