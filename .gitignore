@@ -3,10 +3,11 @@
 Backend/milan/
 Backend/__pycache__/
 *.pyc
-
 # Node
 frontend/node_modules/
 frontend/.next/
-
 # Environment files
 .env
+.env.local
+frontend/.env.local
+frontend/.env*.local

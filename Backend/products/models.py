@@ -43,6 +43,8 @@ class Product(models.Model):
 
     stock = models.IntegerField(default=0)
 
+    image_url = models.URLField(blank=True, default="")
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
