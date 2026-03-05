@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+:root {
+  --font-display: '';
+  --font-body: '';
+
+  /* Brand colours */
+  --green-deep:  #1A3A2A;
+  --green-mid:   #24503A;
+  --green-light: #EDF4EF;
+  --gold:        #C9A84C;
+  --gold-light:  #F7EDD5;
+  --gold-dark:   #A6863A;
+  --cream:       #FAF8F3;
+  --text:        #111811;
+  --muted:       #6B7A6E;
+  --border:      #D8E2DB;
+  --white:       #FFFFFF;
+  --red:         #DC2626;
+
+  /* Shadows */
+  --shadow-sm:   0 2px 8px rgba(26,58,42,0.08);
+  --shadow-md:   0 4px 24px rgba(26,58,42,0.12);
+  --shadow-lg:   0 12px 40px rgba(26,58,42,0.18);
+
+  /* Radii */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   18px;
+  --radius-full: 100px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body), 'Outfit', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography helpers ── */
+.display {
+  font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif;
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--green-deep);
+  color: var(--gold);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background: var(--green-mid);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--gold-light);
+  color: var(--gold-dark);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 8px 18px;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+  text-decoration: none;
+}
+
+.btn-secondary:hover { background: #F0E2C0; }
+
+/* ── Card ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Page wrapper ── */
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+/* ── Section label ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* ── Pill tag ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.pill-gold {
+  background: var(--gold-light);
+  color: var(--gold-dark);
+}
+
+.pill-green {
+  background: var(--green-light);
+  color: var(--green-mid);
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fadeUp 0.45s ease both; }
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .page { padding: 28px 16px; }
+}
