@@ -1,59 +1,49 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Cart, CartItem
 from .serializers import CartSerializer
-
 from products.models import Product
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_cart(request):
-    """
-    Get user's cart using user_id from query params (temporary, until authentication is added)
-    """
-
-    user_id = request.query_params.get("user_id")
-
-    if not user_id:
-        return Response(
-            {"error": "user_id required"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    cart, created = Cart.objects.get_or_create(
-        user_id=user_id,
+    """Get the logged in user's active cart."""
+    cart, _ = Cart.objects.get_or_create(
+        user=request.user,
         is_active=True
     )
-
-    serializer = CartSerializer(cart)
-
-    return Response(serializer.data)
+    return Response(CartSerializer(cart).data)
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def add_to_cart(request):
-    """
-    Add product to cart
-    """
-
-    user_id = request.data.get("user_id")
+    """Add a product to the logged in user's cart."""
     product_id = request.data.get("product_id")
     quantity = int(request.data.get("quantity", 1))
 
-    if not user_id or not product_id:
+    if not product_id:
         return Response(
-            {"error": "user_id and product_id required"},
+            {"error": "product_id is required"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    cart, created = Cart.objects.get_or_create(
-        user_id=user_id,
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return Response(
+            {"error": "Product not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    cart, _ = Cart.objects.get_or_create(
+        user=request.user,
         is_active=True
     )
-
-    product = Product.objects.get(id=product_id)
 
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
@@ -67,6 +57,72 @@ def add_to_cart(request):
 
     cart_item.save()
 
-    serializer = CartSerializer(cart)
+    return Response(CartSerializer(cart).data)
 
-    return Response(serializer.data)
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def update_cart_item(request, item_id):
+    """Update quantity of a cart item."""
+    quantity = request.data.get("quantity")
+
+    if quantity is None:
+        return Response(
+            {"error": "quantity is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        cart_item = CartItem.objects.get(
+            id=item_id,
+            cart__user=request.user,
+            cart__is_active=True
+        )
+    except CartItem.DoesNotExist:
+        return Response(
+            {"error": "Cart item not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    quantity = int(quantity)
+    if quantity <= 0:
+        cart_item.delete()
+    else:
+        cart_item.quantity = quantity
+        cart_item.save()
+
+    cart = Cart.objects.get(user=request.user, is_active=True)
+    return Response(CartSerializer(cart).data)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def remove_from_cart(request, item_id):
+    """Remove a specific item from the cart."""
+    try:
+        cart_item = CartItem.objects.get(
+            id=item_id,
+            cart__user=request.user,
+            cart__is_active=True
+        )
+    except CartItem.DoesNotExist:
+        return Response(
+            {"error": "Cart item not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    cart_item.delete()
+    cart = Cart.objects.get(user=request.user, is_active=True)
+    return Response(CartSerializer(cart).data)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def clear_cart(request):
+    """Remove all items from the cart."""
+    try:
+        cart = Cart.objects.get(user=request.user, is_active=True)
+        cart.items.all().delete()
+        return Response(CartSerializer(cart).data)
+    except Cart.DoesNotExist:
+        return Response({"error": "No active cart found"}, status=status.HTTP_404_NOT_FOUND)
