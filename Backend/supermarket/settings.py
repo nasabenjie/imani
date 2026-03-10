@@ -116,3 +116,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files (uploaded images)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Email
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@imani.ug")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
