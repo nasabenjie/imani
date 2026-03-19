@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'orders',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@imani.ug")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
+
+# MTN Mobile Money
+MTN_SANDBOX = os.getenv("MTN_SANDBOX", "True") == "True"
+MTN_SUBSCRIPTION_KEY = os.getenv("MTN_SUBSCRIPTION_KEY", "")
+MTN_API_USER = os.getenv("MTN_API_USER", "")
+MTN_API_KEY = os.getenv("MTN_API_KEY", "")
+
+# Airtel Money
+AIRTEL_SANDBOX = os.getenv("AIRTEL_SANDBOX", "True") == "True"
+AIRTEL_CLIENT_ID = os.getenv("AIRTEL_CLIENT_ID", "")
+AIRTEL_CLIENT_SECRET = os.getenv("AIRTEL_CLIENT_SECRET", "")
